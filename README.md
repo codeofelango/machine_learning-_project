@@ -1,3 +1,5 @@
+Project link: https://ml-regression-applicat.herokuapp.com/
+
 # machine_learning-_project
 Start Machine Learning project.
 
@@ -58,6 +60,9 @@ To check running container in docker
 
 docker ps
 Tos stop docker conatiner
+
+
+Learn from: https://github.com/avnyadav/machine_learning_project
 
 docker stop <container_id>
 
