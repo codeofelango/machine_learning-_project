@@ -67,131 +67,97 @@ class Configuartion:
             raise HousingException(e,sys) from e
 
     def get_data_validation_config(self) -> DataValidationConfig:
+        try:
             artifact_dir = self.training_pipeline_config.artifact_dir
+
             data_validation_artifact_dir=os.path.join(
                 artifact_dir,
-                DATA_VALIDATION_ARTIFACT_DIR,
+                DATA_VALIDATION_ARTIFACT_DIR_NAME,
                 self.time_stamp
             )
-            data_validation_info = self.config_info[DATA_VALIDATION_CONFIG_KEY]
-            schema_file_name = os.path.join(
-                data_validation_artifact_dir,
-                data_validation_info[DATA_VALIDATION_SCHEMA_FILE_NAME_KEY]
+            data_validation_config = self.config_info[DATA_VALIDATION_CONFIG_KEY]
+
+
+            schema_file_path = os.path.join(ROOT_DIR,
+            data_validation_config[DATA_VALIDATION_SCHEMA_DIR_KEY],
+            data_validation_config[DATA_VALIDATION_SCHEMA_FILE_NAME_KEY]
             )
 
-            data_validation_config=DataValidationConfig(
-                schema_file_path=schema_file_name
+            report_file_path = os.path.join(data_validation_artifact_dir,
+            data_validation_config[DATA_VALIDATION_REPORT_FILE_NAME_KEY]
             )
-            logging.info(f"Data Validation config: {data_validation_config}")
+
+            report_page_file_path = os.path.join(data_validation_artifact_dir,
+            data_validation_config[DATA_VALIDATION_REPORT_PAGE_FILE_NAME_KEY]
+
+            )
+
+            data_validation_config = DataValidationConfig(
+                schema_file_path=schema_file_path,
+                report_file_path=report_file_path,
+                report_page_file_path=report_page_file_path,
+            )
+            return data_validation_config
+        except Exception as e:
+            raise HousingException(e,sys) from e
 
     def get_data_transformation_config(self) -> DataTransformationConfig:
+        try:
             artifact_dir = self.training_pipeline_config.artifact_dir
+
             data_transformation_artifact_dir=os.path.join(
                 artifact_dir,
                 DATA_TRANSFORMATION_ARTIFACT_DIR,
                 self.time_stamp
             )
-            data_transformation_info = self.config_info[DATA_TRANSFORMATION_CONFIG_KEY]
-            add_bedroom_per_room = os.path.join(
+
+            data_transformation_config_info=self.config_info[DATA_TRANSFORMATION_CONFIG_KEY]
+
+            add_bedroom_per_room=data_transformation_config_info[DATA_TRANSFORMATION_ADD_BEDROOM_PER_ROOM_KEY]
+
+
+            preprocessed_object_file_path = os.path.join(
                 data_transformation_artifact_dir,
-                data_transformation_info[DATA_TRANSFORMATION_ADD_BEDROOM_PER_ROOM_KEY]
+                data_transformation_config_info[DATA_TRANSFORMATION_PREPROCESSING_DIR_KEY],
+                data_transformation_config_info[DATA_TRANSFORMATION_PREPROCESSED_FILE_NAME_KEY]
             )
-            transformed_dir = os.path.join(
-                data_transformation_artifact_dir,
-                data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_DIR_KEY]
-            )
+
             
-            transformed_train_dir = os.path.join(
-                transformed_dir,
-                data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_TRAIN_DIR_KEY]
+            transformed_train_dir=os.path.join(
+            data_transformation_artifact_dir,
+            data_transformation_config_info[DATA_TRANSFORMATION_DIR_NAME_KEY],
+            data_transformation_config_info[DATA_TRANSFORMATION_TRAIN_DIR_NAME_KEY]
             )
+
 
             transformed_test_dir = os.path.join(
-                transformed_dir,
-                data_transformation_info[DATA_TRANSFORMATION_TRANSFORMED_TEST_DIR_KEY]
-            )
+            data_transformation_artifact_dir,
+            data_transformation_config_info[DATA_TRANSFORMATION_DIR_NAME_KEY],
+            data_transformation_config_info[DATA_TRANSFORMATION_TEST_DIR_NAME_KEY]
 
-            preprocessing_dir = os.path.join(
-                transformed_dir,
-                data_transformation_info[DATA_TRANSFORMATION_PREPROCESSING_DIR_KEY]
             )
-
-            preprocessed_object_file = os.path.join(
-                data_transformation_artifact_dir,
-                data_transformation_info[DATA_TRANSFORMATION_PREPROCESSED_OBJECT_FILE_NAME_KEY]
-            )
+            
 
             data_transformation_config=DataTransformationConfig(
                 add_bedroom_per_room=add_bedroom_per_room,
-                transformed_dir=transformed_dir,
+                preprocessed_object_file_path=preprocessed_object_file_path,
                 transformed_train_dir=transformed_train_dir,
-                transformed_test_dir=transformed_test_dir,
-                preprocessing_dir=preprocessing_dir,
-                preprocessed_object_file=preprocessed_object_file
+                transformed_test_dir=transformed_test_dir
             )
-            logging.info(f"Data Transformation config: {data_transformation_config}")
 
+            logging.info(f"Data transformation config: {data_transformation_config}")
+            return data_transformation_config
+        except Exception as e:
+            raise HousingException(e,sys) from e
 
     def get_model_trainer_config(self) -> ModelTrainerConfig:
-            artifact_dir = self.training_pipeline_config.artifact_dir
-            model_trainer_artifact_dir=os.path.join(
-                artifact_dir,
-                MODEL_TRAINER_ARTIFACT_DIR,
-                self.time_stamp
-            )
-            model_trainer_info = self.config_info[MODEL_TRAINER_CONFIG_KEY]
-            trainer_model_dir = os.path.join(
-                model_trainer_artifact_dir,
-                model_trainer_info[MODEL_TRAINER_TRAINED_MODEL_DIR_KEY]
-            )
-            model_file_name = os.path.join(
-                model_trainer_artifact_dir,
-                model_trainer_info[MODEL_TRAINER_MODEL_FILE_NAME_KEY]
-            )
-            base_accuracy = os.path.join(
-                model_trainer_artifact_dir,
-                model_trainer_info[MODEL_TRAINER_BASE_ACCURACY_KEY]
-            )
-            model_trainer_config=ModelTrainerConfig(
-                trainer_model_dir=trainer_model_dir,
-                model_file_name=model_file_name,
-                base_accuracy=base_accuracy
-            )
-            logging.info(f"Model Trainer config: {model_trainer_config}")
+        pass
 
     def get_model_evaluation_config(self) ->ModelEvaluationConfig:
-            artifact_dir = self.training_pipeline_config.artifact_dir
-            model_evaluation_artifact_dir=os.path.join(
-                artifact_dir,
-                MODEL_EVALUATION_ARTIFACT_DIR,
-                self.time_stamp
-            )
-            model_evaluation_info = self.config_info[MODEL_EVALUATION_CONFIG_KEY]
-            model_evauation_file_name = os.path.join(
-                model_evaluation_info,
-                model_evaluation_info[MODEL_EVALUATION_FILE_NAME_KEY]
-            )
-            model_evaluation_config=ModelEvaluationConfig(
-                model_evauation_file_name=model_evauation_file_name
-            )
-            logging.info(f"Model Evaluation config: {model_evaluation_config}")
+        pass
 
     def get_model_pusher_config(self) -> ModelPusherConfig:
-            artifact_dir = self.training_pipeline_config.artifact_dir
-            model_pusher_artifact_dir=os.path.join(
-                artifact_dir,
-                MODEL_PUSHER_ARTIFACT_DIR,
-                self.time_stamp
-            )
-            model_pusher_info = self.config_info[MODEL_PUSHER_CONFIG_KEY]
-            model_export_dir = os.path.join(
-                model_pusher_artifact_dir,
-                model_pusher_info[MODEL_PUSHER_MODEL_EXPORT_DIR_KEY]
-            )
-            model_pusher_config=ModelPusherConfig(
-                export_dir_path=model_export_dir
-            )
-            logging.info(f"Model Pusher config: {model_pusher_config}")
+        pass
 
     def get_training_pipeline_config(self) ->TrainingPipelineConfig:
         try:
